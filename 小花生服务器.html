@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCPSL 小花生服务器 - 社区中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #050505; /* Deeper black for more intensity */
+            color: #E0E0E0; /* Off-White Text */
+            line-height: 1.6; /* Slightly reduced line height for compactness */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            /* Subtle background texture for depth, mimicking a data screen */
+            background-image: radial-gradient(circle at top left, rgba(30, 30, 30, 0.25) 1%, transparent 30%), /* Refined texture opacity */
+                              radial-gradient(circle at bottom right, rgba(30, 30, 30, 0.25) 1%, transparent 30%); /* Refined texture opacity */
+            background-repeat: no-repeat;
+            background-size: 80% 80%;
+            background-attachment: fixed;
+            background-position: center center;
+        }
+
+        /* Typography */
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .scp-header {
+            font-family: 'Roboto Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 4px; /* Balanced spacing for headers */
+            color: #D32F2F; /* Deep Red */
+            text-shadow: 0 0 12px rgba(211, 47, 47, 0.8), 0 0 20px rgba(211, 47, 47, 0.5); /* Refined red glow */
+        }
+        .section-title::before {
+            content: '█';
+            color: #D32F2F; /* Deep Red block */
+            margin-right: 1.5rem; /* Balanced space */
+            text-shadow: 0 0 15px rgba(211, 47, 47, 0.9), 0 0 25px rgba(211, 47, 47, 0.6); /* Refined red glow */
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #D32F2F; /* Deep Red */
+            color: #E0E0E0; /* Off-White Text */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 0 20px rgba(211, 47, 47, 0.9); /* Refined red glow */
+            border: 1.5px solid rgba(211, 47, 47, 0.95); /* Refined border thickness */
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px; /* Slightly less rounded */
+            padding: 1.1rem 2.5rem; /* Reduced padding for compactness */
+            font-size: 1.2rem; /* Reduced font size for compactness */
+            letter-spacing: 0.8px; /* Subtle letter spacing */
+        }
+        .btn-primary:hover {
+            background-color: #B71C1C; /* Slightly darker red */
+            box-shadow: 0 0 35px rgba(211, 47, 47, 1.2); /* Refined glow on hover */
+            transform: translateY(-3px); /* Balanced lift */
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 0 15px rgba(211, 47, 47, 0.7);
+        }
+        .btn-primary:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1); /* Refined overlay on hover */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        .btn-primary:hover:before {
+            opacity: 1;
+        }
+
+        .btn-secondary {
+            background-color: #282828; /* Dark Grey */
+            color: #E0E0E0; /* Off-White Text */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8); /* Refined dark glow */
+            border: 1.5px solid #555555; /* Refined border thickness */
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px; /* Slightly less rounded */
+            padding: 1.1rem 2.5rem; /* Reduced padding for compactness */
+            font-size: 1.2rem; /* Reduced font size for compactness */
+            letter-spacing: 0.8px; /* Subtle letter spacing */
+        }
+        .btn-secondary:hover {
+            background-color: #383838; /* Lighter dark grey */
+            box-shadow: 0 0 25px rgba(0,0,0,1.2); /* Refined glow on hover */
+            transform: translateY(-3px); /* Balanced lift */
+        }
+        .btn-secondary:active {
+            transform: translateY(0);
+            box-shadow: 0 0 10px rgba(0,0,0,0.6);
+        }
+        .btn-secondary:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.07); /* Refined overlay on hover */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        .btn-secondary:hover:before {
+            opacity: 1;
+        }
+
+        /* Cards & Containers */
+        .card {
+            background-color: #1A1A1A; /* Slightly lighter black for cards */
+            border: 1.5px solid #333333; /* Refined border thickness */
+            border-radius: 12px; /* Balanced rounded corners */
+            box-shadow: 0 10px 50px rgba(0,0,0,1); /* Refined shadow for depth */
+            position: relative;
+            overflow: hidden;
+            padding: 2.75rem; /* Reduced internal padding for compactness */
+        }
+        .card:before { /* Inner border/glow for cards */
+            content: '';
+            position: absolute;
+            top: 7px; /* Adjusted inset */
+            left: 7px;
+            right: 7px;
+            bottom: 7px;
+            border: 1.5px solid rgba(80, 80, 80, 0.6); /* Refined inner border */
+            border-radius: 10px;
+            pointer-events: none;
+            box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.1); /* Refined inner gold glow */
+        }
+
+        /* Tabs */
+        .tab-button {
+            transition: all 0.3s ease;
+            background-color: #282828;
+            color: #E0E0E0;
+            border: 1.5px solid #444444;
+            border-radius: 8px;
+            padding: 0.9rem 1.8rem; /* Reduced padding */
+            font-size: 1.05rem; /* Reduced font size */
+            letter-spacing: 0.5px;
+        }
+        .tab-button.active {
+            background-color: #D32F2F;
+            color: #E0E0E0;
+            box-shadow: 0 0 25px rgba(211, 47, 47, 1); /* Refined active shadow */
+            border-color: #D32F2F;
+            transform: translateY(-3px); /* Balanced lift on active */
+        }
+        .tab-button:hover:not(.active) {
+            background-color: #383838;
+            border-color: #666666;
+            transform: translateY(-2px); /* Balanced lift on hover */
+        }
+        
+        /* Text Colors - Optimized for Visibility on Dark Background */
+        .text-red-700 { color: #D32F2F; }
+        .bg-red-100 { background-color: rgba(211, 47, 47, 0.3); border-color: rgba(211, 47, 47, 0.8); } /* Refined opaque red background */
+
+        .bg-gray-100 { background-color: #282828; }
+        .text-gray-500 { color: #B5B5B5; } /* Footer minor text - lightened */
+        .text-gray-600 { color: #D5D5D5; } /* Intro paragraphs, footer main text - more visible */
+        .text-gray-700 { color: #E5E5E5; } /* Main content paragraphs - very visible */
+        .text-gray-800 { color: #F0F0F0; } /* Mobile menu links - slightly lighter */
+        .border-gray-200 { border-color: #404040; } /* Refined border */
+
+        /* Chart Specifics */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Adjusted max-width for balance */
+            margin-left: auto;
+            margin-right: auto;
+            height: 280px;
+            max-height: 350px;
+            background-color: #282828;
+            border-radius: 10px;
+            padding: 1.75rem; /* Reduced padding */
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.8); /* Refined inner shadow */
+            border: 1.5px solid #505050;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px; /* Balanced height on desktop */
+                max-height: 450px;
+            }
+        }
+        .chart-container canvas {
+            background-color: transparent !important; /* Ensure Chart.js background is transparent */
+        }
+
+        /* Feature Items Grid */
+        .feature-item {
+            background-color: #222222;
+            border: 1.5px solid #505050; /* Refined border thickness */
+            border-radius: 10px; /* Balanced rounded */
+            padding: 1.75rem; /* Reduced padding */
+            font-family: 'Noto Sans SC', sans-serif;
+            color: #E0E0E0;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.25); /* Refined gold glow with inner glow */
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 1.25rem; /* Reduced gap */
+            text-align: left;
+        }
+        .feature-item .feature-description-text {
+            font-size: 1rem; /* Balanced base font for feature description */
+            color: #D5D5D5; /* Very visible grey for descriptions */
+        }
+        .feature-item strong {
+            color: #FFD700;
+            font-family: 'Roboto Mono', monospace;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6); /* Refined subtle glow */
+        }
+        .feature-item code {
+            color: #FFD700;
+            background-color: #181818;
+            padding: 0.2em 0.5em; /* Reduced padding */
+            border-radius: 5px;
+            border: 1px solid #777777;
+            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3); /* Refined inner glow for code */
+        }
+        .feature-item ul {
+            list-style: none;
+            padding-left: 1.5em; /* Reduced indent */
+            margin-top: 1em; /* Reduced space above list */
+        }
+        .feature-item li {
+            position: relative;
+            padding-left: 1.8em; /* Reduced space for bullet */
+            margin-bottom: 0.5em; /* Reduced vertical spacing */
+            font-size: 0.95rem; /* Slightly smaller for sub-items */
+            color: #C5C5C5; /* Lightened for sub-items */
+        }
+        .feature-item li:before {
+            content: '►';
+            position: absolute;
+            left: 0;
+            color: #D32F2F;
+            font-size: 0.9em; /* Balanced bullet size */
+            top: 0.1em;
+        }
+        .feature-item:hover {
+            transform: translateY(-8px); /* Balanced lift */
+            box-shadow: 0 0 40px rgba(255, 215, 0, 1), inset 0 0 20px rgba(255, 215, 0, 0.4); /* Refined intense glow on hover */
+            background-color: #383838; /* Slightly lighter hover background */
+        }
+        
+        /* Rules List */
+        .rule-list li {
+            position: relative;
+            padding-left: 2.5rem; /* Reduced space for number */
+            margin-bottom: 1.5rem; /* Reduced vertical spacing */
+            color: #D0D0D0;
+            font-size: 1.15rem; /* Balanced rule text size */
+        }
+        .rule-list li::before {
+            content: counter(rule-counter);
+            counter-increment: rule-counter;
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-family: 'Roboto Mono', monospace;
+            color: #FFD700;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5); /* Refined gold glow */
+            font-weight: bold;
+            font-size: 1.45rem; /* Reduced rule number size for balance */
+        }
+
+        /* Inline Code */
+        code {
+            background-color: #151515;
+            color: #FFD700;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            border: 1px solid #888888;
+            font-size: 0.9em; /* Slightly smaller for better distinction */
+            box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.3); /* Refined inner shadow */
+        }
+    </style>
+</head>
+<body>
+    <main class="container mx-auto px-6 py-8 md:py-12">
+
+        <section id="home" class="text-center mb-20 md:mb-32">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 scp-header">欢迎来到<span class="text-red-700">小花生</span>服务器</h1>
+            <p class="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-12">一个为硬核玩家打造的独特SCP:SL体验。在这里，威胁不仅仅是传说，而是真实。</p>
+            
+            <div class="card p-8 max-w-4xl mx-auto">
+                <h3 class="text-2xl font-bold mb-6 text-left scp-header">服务器特色：不朽花生</h3>
+                 <p class="text-left text-gray-700 mb-6">本服务器的核心特色是对SCP-173进行了独家强化。我们通过插件将其基础生命值提升至 <strong class="text-red-700 text-3xl font-mono">7000 HP</strong>，远超原版的4500点。这使得“小花生”成为一个真正难以处理的、能够持续压制人类阵线的恐怖存在。准备好迎接前所未有的挑战了吗？</p>
+                 <div class="chart-container">
+                    <canvas id="hpChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="mb-20 md:mb-32">
+            <h2 class="text-4xl md:text-5xl font-bold mb-10 section-title scp-header">服务器独家特色</h2>
+            <p class="text-lg text-gray-600 mb-10 max-w-4xl mx-auto">我们通过自定义插件和特殊设定，为您带来独一无二的游戏体验。探索这些特色，让您的每一次SCPSL之旅都充满惊喜！</p>
+            <div id="features-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Features will be dynamically populated here -->
+            </div>
+        </section>
+
+        <section id="rules" class="mb-20 md:mb-32">
+            <h2 class="text-4xl md:text-5xl font-bold mb-10 section-title scp-header">服务器规则与行为准则</h2>
+            <div class="card p-8 mb-10 text-center">
+                <p class="text-xl md:text-3xl font-bold text-red-700 mb-6">服务器交流群: 1048022803</p>
+                <p class="text-base text-gray-600 mb-4">举报管理员乱权，玩家违规，处罚申诉需要进群举报</p>
+                <p class="text-base text-gray-600">游戏内可以在控制台使用 <code class="bg-gray-100 text-gray-800 px-3 py-1 rounded-md font-mono border border-gray-200">.ac</code> 联系在线管理</p>
+            </div>
+
+            <div class="card p-8 mb-10">
+                <h3 class="3xl font-bold mb-6 scp-header">服务器规则:</h3>
+                <ol id="rules-list" class="list-none counter-reset:rule-counter">
+                    <!-- Rules will be dynamically populated here -->
+                </ol>
+                <p class="text-base text-gray-600 mt-10">发现违规请第一时间在玩家列表举报违规玩家，管理员会第一时间收到举报</p>
+            </div>
+
+            <div class="card p-8 text-center">
+                <p class="text-2xl font-bold text-red-700">服务器规则最终解释权归小花生服务器管理组所有</p>
+            </div>
+        </section>
+
+        <section id="guides" class="mb-20 md:mb-32">
+            <h2 class="text-4xl md:text-5xl font-bold mb-10 section-title scp-header">玩家指南与游戏百科</h2>
+            <p class="text-lg text-gray-600 max-w-4xl mx-auto mb-10">本指南旨在帮助所有玩家快速成长，享受游戏的全部乐趣。</p>
+            
+            <div class="mb-8 flex flex-wrap gap-4 justify-center">
+                <button class="tab-button px-6 py-3 rounded-lg font-bold active" data-tab="scp">SCP项目档案</button>
+                <button class="tab-button px-6 py-3 rounded-lg font-bold" data-tab="faction">人类阵营解析</button>
+                <button class="tab-button px-6 py-3 rounded-lg font-bold" data-tab="faq">常见问题(FAQ)</button>
+            </div>
+
+            <div id="guides-content" class="card p-8 min-h-[500px]">
+            </div>
+        </section>
+        
+        <section id="community" class="text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-10 section-title scp-header">加入我们的社区</h2>
+            <p class="text-xl text-gray-600 max-w-4xl mx-auto mb-12">游戏内的战斗只是乐趣的一部分。加入我们的Discord，与其他玩家交流战术、分享精彩瞬间，或参与社区活动！</p>
+            <div class="flex justify-center flex-wrap gap-6">
+                <a href="https://discord.gg/G6YmsXXHJT" class="btn-primary font-bold py-5 px-10 rounded-lg text-xl" target="_blank">加入Discord</a>
+                <a href="https://www.bilibili.com/video/BV1iXegz4Ejp/?spm_id_from=888.80997.embed_other.whitelist&bvid=BV1iXegz4Ejp&vd_source=3ffc5f531cd1d376b77d4e9c4dbabd8f" class="btn-secondary font-bold py-5 px-10 rounded-lg text-xl" target="_blank">服务器介绍视频</a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-black text-gray-500 mt-20 border-t border-[#333333]">
+        <div class="container mx-auto px-6 py-6 text-center text-sm">
+            <p>小花生服务器 &copy; 2025. 本网站为非官方粉丝项目，与 Northwood Studios 无关</p>
+            <p class="text-gray-600 mt-2">该网站为&copy; Koberm制作</p>
+            <p class="text-gray-600 mt-2">网站如有错误请联系: 520kober@gmail.com</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const db = {
+                rules: [
+                    "1、禁止任何外挂/鼠标宏等第三方作弊工具",
+                    "2、禁止嘲讽，压力队友",
+                    "3、禁止恶意对他人进行言语攻击，与其他人对骂",
+                    "4、禁止观察者使用聊天插件公屏报点",
+                    "5、禁止在公共频道(观察者，对讲机，广播室)播放超过10秒的音频，禁止在任何频道播放与色情，政治有关的音频",
+                    "6、禁止交谈政治，色情相关内容",
+                    "7、禁止内鬼行为(没有SCP情况下私人电梯、随手关门)",
+                    "8、禁止SCP与人类合作，人类之间可以暂时合作对付SCP",
+                    "9、禁止投降的D级人员故意不走，拖对局时长"
+                ],
+                features: [
+                    { name: "45秒重生保护", description: "九尾/混沌刷新后45秒内获得保护，开枪取消。" },
+                    { name: "330概率粉糖", description: "330拿糖有10%几率出粉糖。" },
+                    { name: "保安下班", description: "设施警卫逃离后成为九尾狐收容专家。" },
+                    { name: "小游戏", description: "管理员开启的娱乐模式。" },
+                    { name: "远程钥匙卡", description: "背包有对应权限卡即可徒手开门。" },
+                    { name: "可乐，洗手液无害", description: "两者同时用不会中毒，喝可乐不掉血。" },
+                    { name: "效果保持", description: "逃离设施后效果不消失。" },
+                    { name: "914手持加工", description: "914支持手持物品加工。" },
+                    { name: "电磁炮掉落", description: "黑卡超粗加工15%几率出电磁炮。" },
+                    { name: "无限状态", description: "人类无限体力、子弹、对讲机电量，刷新加速。" },
+                    { name: "九尾狐血量强化", description: "指挥官150血，中士/收容专家120血。" },
+                    { name: "混沌分裂者血量强化", description: "压制者120血，掠夺者120血（额外A7），征召兵150血（增配手雷肾上腺素）。" },
+                    { name: "D级被绑逃离", description: "D级被绑逃离后成为九尾狐收容专家。" },
+                    { name: "SCP全员回血", description: "SCP站立10秒不动后每秒恢复5hp。" },
+                    { name: "SCP939强化", description: "血量3200。开局40秒奔跑不耗体力，基础伤害60，扑人180，击杀恢复100血。" },
+                    { name: "SCP106强化", description: "血量2500。一击抓入口袋并造成80伤，攻击间隔2.4秒，击杀恢复80血。特殊能力：空间、朋友、狩猎、传送可绑定快捷键。" },
+                    { name: "SCP049强化", description: "血量2900。攻击伤害大幅提高，基本必死无疑，击杀恢复100血。" },
+                    { name: "SCP049-2强化", description: "血量500，自带008病毒，攻击40%传染。感染立即掉10血每5秒减8血。医疗包45%治愈。感染死亡后成为049-2。914超精/粗加工几率转049/3114。" },
+                    { name: "SCP096强化", description: "血量3000。普攻100伤，冲锋150伤，击杀恢复50血。" },
+                    { name: "SCP173强化", description: "血量7000。自带10%免伤，击杀恢复300血。" },
+                    { name: "SCP3114强化", description: "血量1250。伤害提升，普攻20伤，击杀恢复80血。" },
+                    { name: "SCP079能力强化", description: "所有能力可绑定快捷键，可查看状态。1级解锁“传送”能力" },
+                    { name: "聊天插件", description: "<code>.c 内容</code>团队聊；<code>.bc 内容</code>全体聊；<code>.ac 内容</code>向管理发信息。" },
+                    { name: "SCP更换", description: "回合80秒内SCP可输<code>.swap 编号</code>申请更换，需对方同意，30秒无响应失败。" },
+                    { name: "D级投降", description: "开局D级可输<code>.tx</code>投降，加入基金会阵营，逃离成九尾狐专家。攻击过基金会无法投降，逃离成混沌征召兵。" },
+                    { name: "系统核弹", description: "回合24分钟后开启系统核弹。" },
+                    { name: "Omega核弹", description: "默认15%几率替换Alpha核弹，每开一发电机概率+15%。320秒引爆，期间检查点和撤离直升机将在特定时间开启，引爆不可中止。" },
+                    { name: "贪吃蛇积分购物", description: "控制台输<code>.shop</code>购物，<code>.score</code>查分数排名。回合前三分钟无法购买。" }
+                ],
+                guides: {
+                    scp: {
+                        title: 'SCP项目档案',
+                        intro: '此处档案记录了设施内所有已知异常项目。情报随时可能过时，请注意关键信息。',
+                        items: [
+                            { 
+                                name: 'SCP-173 "花生"', 
+                                hp: '7000 (服务器强化)', 
+                                description: '不被注视即移动，近身秒杀，速度极快，是噩梦。', 
+                                strategy: '人类需持续注视、团队行动，用榴弹或Micro H.I.D.造成伤害。SCP方与079配合，利用关门和断电制造视野盲区。' 
+                            },
+                            { 
+                                name: 'SCP-106 "老头"', 
+                                hp: '2500', 
+                                description: '能穿墙将猎物送入口袋次元，攻击间隔短，特殊能力可绑快捷键。', 
+                                strategy: '人类利用特斯拉门和收容献祭装置控制，避免狭窄空间。SCP穿墙突袭，将目标送入口袋次元。' 
+                            },
+                            { 
+                                name: 'SCP-079 "电脑"', 
+                                hp: 'N/A', 
+                                description: '设施控制AI，操控门/电梯/特斯拉门，升级解锁能力，所有能力可绑快捷键。', 
+                                strategy: '人类快速启动五台发电机关闭079，保持沟通。SCP方为队友提供信息支援，控门困敌或保护队友，特斯拉门消灭追兵。' 
+                            },
+                            { 
+                                name: 'SCP-049 "庸医"', 
+                                hp: '2900', 
+                                description: '接触即感染，高伤害，可复活为SCP-049-2。', 
+                                strategy: '人类保持距离，远程风筝，优先处理僵尸。SCP方快速转化D级/科学家组建僵尸大军，与173/106配合。' 
+                            },
+                            { 
+                                name: 'SCP-939 "狗子"', 
+                                hp: '3200', 
+                                description: '盲眼，靠声音和记忆定位，可模仿人类声音。开局40秒奔跑不耗体力，高基础伤害。', 
+                                strategy: '人类保持安静，被发现立刻变位，不信可疑语音。SCP方利用语音模仿诱敌，路口埋伏，共享队友位置信息。' 
+                            },
+                            { 
+                                name: 'SCP-049-2 "小僵"', 
+                                hp: '500', 
+                                description: '自带008病毒，攻击40%概率传染。感染立即掉10血每5秒减8血。医疗包45%治愈。感染死亡后成为049-2。914超精/粗加工几率转049/3114。', 
+                                strategy: '人类需优先击杀，避免被感染转化。' 
+                            },
+                            { 
+                                name: 'SCP-096 "肘6"', 
+                                hp: '3000', 
+                                description: '被注视即暴怒追击，普攻100伤，冲锋150伤。', 
+                                strategy: '人类绝不能直视其脸部，尽快逃离或躲避。' 
+                            },
+                            { 
+                                name: 'SCP-3114 "嘟嘟哒"', 
+                                hp: '1250', 
+                                description: '能模仿人类外观，通过近战攻击造成伤害。', 
+                                strategy: '人类需警惕行为异常队友，辨别真伪。SCP方利用伪装接近，突袭落单目标。' 
+                            }
+                        ]
+                    },
+                    faction: {
+                        title: '人类阵营解析',
+                        intro: '在这座混乱的设施里，人类并非铁板一块。了解你的职责、你的盟友和你的敌人，是活下去的第一步。', 
+                        items: [
+                            { name: 'D级人员', hp: '100', description: '穿着橙色囚服的消耗品。目标是逃出设施，混沌分裂者是你的盟友。', strategy: '初期找钥匙卡，914升级，前往重收容区和出口' },
+                            { name: '科学家', hp: '100', description: '设施研究员。目标是逃离，九尾狐特遣队会保护你，出生带钥匙卡。', strategy: '钥匙卡是宝贵资源。尽快与设施警卫或九尾狐汇合，他们会护送你逃离' },
+                            { name: '设施警卫', hp: '100', description: '负责初期安保。任务是保护科学家，消灭D级和SCP，为九尾狐争取时间。', strategy: '团队行动，尽快找到科学家并护送至安全区域。合理利用武器库资源' },
+                            { name: '九尾狐指挥官', hp: '150', description: '基金会精英部队，高血量。任务是收容SCP，营救科学家。视混沌分裂者和D级为敌。', strategy: '根据指令行动。利用人数和装备优势清理设施。通讯和团队协作至关重要' },
+                            { name: '九尾狐中士', hp: '120', description: '基金会精英部队骨干。任务是收容SCP，营救科学家。视混沌分裂者和D级为敌。', strategy: '根据指令行动。利用人数和装备优势清理设施。通讯和团队协作至关重要' },
+                            { name: '九尾狐收容专家', hp: '120', description: '基金会精英部队专家。任务是收容SCP，营救科学家。视混沌分裂者和D级为敌。', strategy: '根据指令行动。利用人数和装备优势清理设施。通讯和团队协作至关重要' },
+                            { name: '混沌分裂者压制者', hp: '120', description: '混沌精英，高血量。目标是协助D级逃离，对抗基金会。', strategy: '与D级合作，提供武器和支援。目标与MTF相反，制造混乱' },
+                            { name: '混沌分裂者掠夺者', hp: '120', description: '混沌核心战斗力，高血量并额外A7。目标是协助D级逃离，对抗基金会。', strategy: '与D级合作，提供武器和支援。目标与MTF相反，制造混乱' },
+                            { name: '混沌分裂者征召兵', hp: '150', description: '混沌新兵，高血量，额外手雷和肾上腺素。目标是协助D级逃离，对抗基金会。', strategy: '与D级合作，提供武器和支援。目标与MTF相反，制造混乱' }
+                        ]
+                    },
+                    faq: {
+                        title: '常见技术问题解答 (FAQ)',
+                        intro: '在联系管理员前，请尝试这些解决方案', 
+                        items: [
+                            { name: '游戏频繁崩溃怎么办？', description: '1. 验证游戏文件完整性。 2. 更新显卡驱动。 3. 以管理员身份运行。', strategy: '' },
+                            { name: '无法连接到服务器？', description: '1. 检查服务器状态。 2. 检查网络，重启路由器。 3. 检查防火墙设置。 4. 重启游戏。', strategy: '' },
+                            { name: '游戏内语音失灵？', description: '1. 检查麦克风设置。 2. 游戏内语音设置。 3. 重启游戏。', strategy: '' }
+                        ]
+                    }
+                }
+            };
+
+            const hpChartCtx = document.getElementById('hpChart').getContext('2d');
+            new Chart(hpChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['原版 SCP-173', '小花生服务器 SCP-173'],
+                    datasets: [{
+                        label: '生命值 (HP)',
+                        data: [4500, 7000],
+                        backgroundColor: [
+                            'rgba(150, 150, 150, 0.7)',
+                            'rgba(211, 47, 47, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(120, 120, 120)',
+                            'rgb(183, 28, 28)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'SCP-173 生命值对比',
+                            color: '#E0E0E0',
+                            font: { size: 16, family: "'Noto Sans SC', sans-serif" }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#E0E0E0',
+                                font: { family: "'Roboto Mono', monospace" }
+                            },
+                            grid: {
+                                color: 'rgba(70, 70, 70, 0.5)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#E0E0E0',
+                                font: { family: "'Noto Sans SC', sans-serif", size: 14 }
+                            },
+                            grid: {
+                                color: 'rgba(70, 70, 70, 0.5)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const featuresGrid = document.getElementById('features-grid');
+            db.features.forEach(feature => {
+                const featureItem = document.createElement('div');
+                featureItem.className = 'feature-item';
+                featureItem.innerHTML = `
+                    <div class="font-bold text-lg mb-2 text-red-700">${feature.name}</div>
+                    <p class="feature-description-text leading-relaxed">${feature.description}</p>
+                `;
+                featuresGrid.appendChild(featureItem);
+            });
+
+            const rulesList = document.getElementById('rules-list');
+            db.rules.forEach(rule => {
+                const listItem = document.createElement('li');
+                listItem.textContent = rule;
+                rulesList.appendChild(listItem);
+            });
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const guidesContent = document.getElementById('guides-content');
+
+            function renderGuidesContent(tabId) {
+                const contentData = db.guides[tabId];
+                if (!contentData) return;
+
+                let itemsHtml = '';
+                // Sort SCPs by their name for consistent display
+                if (tabId === 'scp' || tabId === 'faction') {
+                    contentData.items.sort((a, b) => {
+                        // Extract number for SCPs, otherwise compare names
+                        const nameA = a.name.includes('SCP-') ? parseInt(a.name.split('-')[1]) : a.name;
+                        const nameB = b.name.includes('SCP-') ? parseInt(b.name.split('-')[1]) : b.name;
+                        if (typeof nameA === 'number' && typeof nameB === 'number') {
+                            return nameA - nameB;
+                        }
+                        return String(nameA).localeCompare(String(nameB));
+                    });
+                }
+
+                contentData.items.forEach(item => {
+                    itemsHtml += `
+                        <div class="mb-6 pb-6 border-b border-[#333333] last:border-b-0">
+                            <h4 class="text-xl font-bold text-red-700">${item.name} ${item.hp ? `<span class="font-mono text-sm text-red-700 bg-red-100 px-2 py-1 rounded border border-red-700">${item.hp} HP</span>` : ''}</h4>
+                            <p class="text-gray-700 my-2">${item.description}</p>
+                            ${item.strategy ? `<p class="text-sm bg-[#282828] p-3 rounded-md border border-[#444444] text-gray-700">${item.strategy}</p>` : ''}
+                        </div>
+                    `;
+                });
+
+                guidesContent.innerHTML = `
+                    <h3 class="2xl font-bold mb-2 scp-header">${contentData.title}</h3>
+                    <p class="text-gray-600 mb-6">${contentData.intro}</p>
+                    <div>${itemsHtml}</div>
+                `;
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const tabId = button.getAttribute('data-tab');
+                    renderGuidesContent(tabId);
+                });
+            });
+
+            renderGuidesContent('scp');
+        });
+    </script>
+</body>

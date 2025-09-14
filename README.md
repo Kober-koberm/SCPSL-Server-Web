@@ -34,11 +34,11 @@ SCPSL 小花生服务器 - 社区中心
 服务器规则最终解释权归小花生服务器管理组所有。
 
 🔗 加入我们
-服务器交流群：1048022803
+服务器交流QQ群：1048022803
 
-Discord 社区：G6YmsXXHJT
+Discord 社区：https://discord.gg/G6YmsXXHJT
 
-服务器介绍视频：查看视频
+服务器介绍视频：https://www.bilibili.com/video/BV1iXegz4Ejp/?spm_id_from=888.80997.embed_other.whitelist&bvid=BV1iXegz4Ejp&vd_source=3ffc5f531cd1d376b77d4e9c4dbabd8f
 
 ⚠️ 免责声明
 本网站为非官方粉丝项目，与 Northwood Studios 无关。
